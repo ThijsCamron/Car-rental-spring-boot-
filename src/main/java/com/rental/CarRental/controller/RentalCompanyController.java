@@ -3,11 +3,10 @@ package com.rental.CarRental.controller;
 import com.rental.CarRental.dto.*;
 import com.rental.CarRental.entity.Car;
 import com.rental.CarRental.entity.RentalCompany;
-import com.rental.CarRental.service.AdminService;
-import com.rental.CarRental.service.AuthService;
-import com.rental.CarRental.service.CarService;
-import com.rental.CarRental.service.RentalCompanyService;
+import com.rental.CarRental.service.*;
+import com.rental.CarRental.service.security.authorization.RentalCompanyAuthorizationService;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,14 +17,20 @@ import java.util.UUID;
 public class RentalCompanyController {
 
     private final RentalCompanyService rentalCompanyService;
+    private final RentalCompanyAuthorizationService rentalCompanyAuthorizationService;
     private final CarService carService;
-    private final AuthService authService;
+    private final OrderService orderService;
     private final AdminService adminService;
 
-    public RentalCompanyController(RentalCompanyService rentalCompanyService, CarService carService, AuthService authService, AdminService adminService) {
+    public RentalCompanyController(RentalCompanyService rentalCompanyService,
+                                   RentalCompanyAuthorizationService rentalCompanyAuthorizationService,
+                                   CarService carService,
+                                   OrderService orderService,
+                                   AdminService adminService) {
         this.rentalCompanyService = rentalCompanyService;
+        this.rentalCompanyAuthorizationService = rentalCompanyAuthorizationService;
         this.carService = carService;
-        this.authService = authService;
+        this.orderService = orderService;
         this.adminService = adminService;
     }
 
@@ -44,11 +49,13 @@ public class RentalCompanyController {
         return rentalCompanyService.createRentalCompany(request);
     }
 
+    @PreAuthorize("@rentalCompanyAuthorizationService(#id, authentication)")
     @DeleteMapping("/{id}")
     public void deleteRentalCompany(@PathVariable UUID id) {
         rentalCompanyService.deleteRentalCompany(id);
     }
 
+    @PreAuthorize("@rentalCompanyAuthorizationService(#id, authentication)")
     @PatchMapping("/{id}")
     public RentalCompany patchRentalCompany(@PathVariable UUID id, @Valid @RequestBody UpdateRentalCompanyRequest request) {
         return rentalCompanyService.patchRentalCompany(id, request);
@@ -59,9 +66,15 @@ public class RentalCompanyController {
         return carService.getCarsByRentalCompany(id);
     }
 
+    @PreAuthorize("@rentalCompanyAuthorizationService(#id, authentication)")
     @PostMapping("/{id}/cars")
     public Car addCarToRentalCompany(@PathVariable UUID id, @Valid @RequestBody CreateCarRequest request) {
         return carService.createCar(id, request);
+    }
+
+    @PostMapping("/{id}/orders")
+    public CreateOrderResponse createOrder(@PathVariable UUID id, @Valid @RequestBody CreateOrderRequest request) {
+        return orderService.createOrder(id, request);
     }
 
     @PostMapping("/{id}/admins")

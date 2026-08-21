@@ -5,7 +5,6 @@ import com.rental.CarRental.entity.Car;
 import com.rental.CarRental.entity.RentalCompany;
 import com.rental.CarRental.exception.ResourceNotFoundException;
 import com.rental.CarRental.repository.CarRepository;
-import com.rental.CarRental.repository.RentalCompanyRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,11 +14,11 @@ import java.util.UUID;
 public class CarService {
 
     private final CarRepository carRepository;
-    private final RentalCompanyRepository rentalCompanyRepository;
+    private final RentalCompanyService rentalCompanyService;
 
-    public CarService(CarRepository carRepository, RentalCompanyRepository rentalCompanyRepository) {
+    public CarService(CarRepository carRepository, RentalCompanyService rentalCompanyService) {
         this.carRepository = carRepository;
-        this.rentalCompanyRepository = rentalCompanyRepository;
+        this.rentalCompanyService = rentalCompanyService;
     }
 
     public List<Car> getAllCars() {
@@ -32,16 +31,12 @@ public class CarService {
     }
 
     public List<Car> getCarsByRentalCompany(UUID rentalCompanyId) {
-        if(!rentalCompanyRepository.existsById(rentalCompanyId)) {
-            throw new ResourceNotFoundException("Rental company with id " + rentalCompanyId + " not found");
-        }
-
+        rentalCompanyService.getRentalCompanyById(rentalCompanyId);
         return carRepository.findAllByRentalCompanyId(rentalCompanyId);
     }
 
     public Car createCar(UUID rentalCompanyId, CreateCarRequest request) {
-        RentalCompany rentalCompany = rentalCompanyRepository.findById(rentalCompanyId)
-                .orElseThrow(() -> new ResourceNotFoundException("Rental company with id " + rentalCompanyId + " not found"));
+        RentalCompany rentalCompany = rentalCompanyService.getRentalCompanyById(rentalCompanyId);
 
         Car car = new Car(request.licensePlate(),
                 request.brand(),

@@ -2,6 +2,8 @@ package com.rental.CarRental.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name="car")
 public class Car {
@@ -15,6 +17,9 @@ public class Car {
     @ManyToOne
     @JoinColumn(name="rental_company_id")
     private RentalCompany rentalCompany;
+
+    @OneToMany(mappedBy = "order")
+    private List<Order> orders;
 
     protected Car() {}
 
@@ -45,6 +50,10 @@ public class Car {
 
     public String getSecondaryColor() {
         return secondaryColor;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
     }
 
     public void setRentalCompany(RentalCompany rentalCompany) {

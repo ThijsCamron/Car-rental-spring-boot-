@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "admin")
-public class Admin implements UserDetails {
+public class Admin implements UserDetails, JwtUser {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

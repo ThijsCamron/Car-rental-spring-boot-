@@ -36,7 +36,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/auth/refresh").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/rental-companies").hasRole("PLATFORM_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/rental-companies/*").hasRole("PLATFORM_ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/rental-companies/*").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/rental-companies/*/admins").permitAll()
                         .anyRequest().authenticated()
                 )
