@@ -11,14 +11,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-public class PlatformAdmin implements UserDetails {
+public class PlatformAdmin implements UserDetails, JwtUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
     @Column(nullable = false, name = "password")
     private String password;
+    private String refreshToken;
 
     protected PlatformAdmin() {}
 
@@ -41,5 +41,13 @@ public class PlatformAdmin implements UserDetails {
     @Override
     public String getUsername() {
         return id.toString();
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

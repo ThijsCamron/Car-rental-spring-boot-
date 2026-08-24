@@ -4,6 +4,7 @@ import com.rental.CarRental.dto.LoginRequest;
 import com.rental.CarRental.dto.LoginResponse;
 import com.rental.CarRental.dto.RefreshRequest;
 import com.rental.CarRental.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
         return authService.login(request);
     }
 
@@ -29,8 +30,8 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public LoginResponse refresh(@AuthenticationPrincipal Jwt jwt, @RequestBody RefreshRequest request) {
-        authService.refresh(request);
+    public LoginResponse refresh(@RequestBody RefreshRequest request) {
+        return authService.refresh(request);
     }
 
 

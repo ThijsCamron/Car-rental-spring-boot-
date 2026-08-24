@@ -2,6 +2,7 @@ package com.rental.CarRental.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -17,10 +18,13 @@ public class RentalCompany {
     private String phoneNumber;
 
     @OneToMany(mappedBy = "rentalCompany")
-    private Set<Car> fleet;
+    private List<Car> cars;
 
     @OneToMany(mappedBy = "rentalCompany")
-    private Set<Admin> admins;
+    private List<Admin> admins;
+
+    @OneToMany(mappedBy = "rentalCompany")
+    private List<RentalCompany> rentalCompanies;
 
     protected RentalCompany() {}
 

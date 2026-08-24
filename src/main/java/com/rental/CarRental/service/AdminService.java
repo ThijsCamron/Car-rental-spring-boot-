@@ -19,15 +19,15 @@ import java.util.UUID;
 public class AdminService {
 
     private final AdminRepository adminRepository;
-    private final RentalCompanyRepository rentalCompanyRepository;
+    private final RentalCompanyService rentalCompanyService;
     private final PasswordEncoder passwordEncoder;
     private final TokenBlackListService tokenBlackListService;
 
-    public AdminService(AdminRepository adminRepository, RentalCompanyRepository rentalCompanyRepository,
+    public AdminService(AdminRepository adminRepository, RentalCompanyService rentalCompanyService,
                         PasswordEncoder passwordEncoder,
                         TokenBlackListService tokenBlackListService) {
         this.adminRepository = adminRepository;
-        this.rentalCompanyRepository = rentalCompanyRepository;
+        this.rentalCompanyService = rentalCompanyService;
         this.passwordEncoder = passwordEncoder;
         this.tokenBlackListService = tokenBlackListService;
     }
@@ -39,8 +39,7 @@ public class AdminService {
 
     public CreateAdminResponse createAdmin(UUID rentalCompanyId, CreateAdminRequest request) {
         String hashedPassword = passwordEncoder.encode(request.password());
-        RentalCompany rentalCompany = rentalCompanyRepository.findById(rentalCompanyId).
-                orElseThrow(() -> new ResourceNotFoundException("Rental company with id " + rentalCompanyId + " cannot be found"));
+        RentalCompany rentalCompany = rentalCompanyService.getRentalCompanyById(rentalCompanyId);
 
         Admin admin = new Admin(request.email(), hashedPassword, request.firstName(), request.lastName(), rentalCompany);
         adminRepository.save(admin);

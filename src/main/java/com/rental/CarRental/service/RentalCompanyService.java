@@ -38,15 +38,13 @@ public class RentalCompanyService {
     }
 
     public void deleteRentalCompany(UUID id) {
-        RentalCompany rentalCompany = rentalCompanyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Rental company with id " + id + " not found"));
+        RentalCompany rentalCompany = this.getRentalCompanyById(id);
 
         rentalCompanyRepository.delete(rentalCompany);
     }
 
     public RentalCompany patchRentalCompany(UUID id, UpdateRentalCompanyRequest request) {
-        RentalCompany rentalCompany = rentalCompanyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Rental company with id " + id + " not found"));
+        RentalCompany rentalCompany = this.getRentalCompanyById(id);
 
        if(request.name() != null) {
            rentalCompany.setName(request.name());

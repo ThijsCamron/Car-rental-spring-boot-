@@ -2,6 +2,7 @@ package com.rental.CarRental.service.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -35,5 +36,11 @@ public class JwtService {
                 .withExpiresAt(new Date(System.currentTimeMillis() + duration * 1000L))
                 .withJWTId(UUID.randomUUID().toString())
                 .sign(algorithm);
+    }
+
+    public DecodedJWT validateJwt(String token) {
+        return JWT.require(algorithm)
+                .build()
+                .verify(token);
     }
 }
